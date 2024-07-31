@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import axios from 'axios';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [formData, setFormData] = useState({
+    username: '',
+    name: '',
+    email: '',
+    password: '',
+    age: ''
+  });
+
+  // Handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+
+    try {
+      const response = await axios.post('/api/register', formData);
+      console.log('User created successfully:', response.data);
+      alert("User created successfully")
+    } catch (error) {
+      console.error('There was an error creating the user!', error.response?.data || error);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className='form'>
+      <h3 style={{ color: 'white', marginBottom: '10px', marginLeft: '10px' }}>Create Account</h3>
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder='Enter your username' name='username' value={formData.username} onChange={handleChange} />
+        <input type="text" placeholder='Enter your name' name='name' value={formData.name} onChange={handleChange} />
+        <input type="email" placeholder='Enter your email' name='email' value={formData.email} onChange={handleChange} />
+        <input type="password" placeholder='Enter your password' name='password' value={formData.password} onChange={handleChange} />
+        <input type="number" placeholder='Enter your age' name='age' value={formData.age} onChange={handleChange} />
+        <button type='submit'>Submit</button>
+      </form>
+    </div>
+  );
 }
 
-export default App
+export default App;
