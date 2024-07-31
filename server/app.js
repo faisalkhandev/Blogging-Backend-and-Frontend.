@@ -11,7 +11,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
-
+app.get('/api', (req, res) => {
+    res.send({ message: 'Hello from the server!' });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
