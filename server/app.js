@@ -19,7 +19,7 @@ app.use(cookieParser());
 //middleware
 
 const authenticateToken = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.cookies.token || req.header('Authorization').replace('Bearer ', '');
 
     if (!token) {
         return res.status(401).json({ error: 'Access denied, token missing!' });
@@ -34,6 +34,7 @@ const authenticateToken = (req, res, next) => {
         return res.status(403).json({ error: 'Invalid token' });
     }
 };
+
 
 
 //register a user
@@ -134,7 +135,23 @@ app.get('/api/logout', async (req, res) => {
     }
 });
 
+//get the uesr
+app.get('/api/user', authenticateToken, async (req, res) => {
+    try {
+        // Use the ID from the token to find the user in the database
+        const user = await User.findById(req.user.id).select('-password'); // Exclude password
 
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        console.log('user::', user);
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 // Test route
 app.get('/api', (req, res) => {
     res.send({ message: 'Hello from the server!' });
