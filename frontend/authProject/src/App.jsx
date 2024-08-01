@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
@@ -24,7 +24,9 @@ function App() {
     try {
       const response = await axios.post('/api/register', formData);
       console.log('User created successfully:', response.data);
-      alert("User created successfully")
+      if (response.status === 422) {
+        alert("Please fill all the fields");
+      }
     } catch (error) {
       console.error('There was an error creating the user!', error.response?.data || error);
     }
