@@ -43,14 +43,13 @@ app.post('/api/register', async (req, res) => {
 
     // Validation
     if (!username || !name || !email || !password || !age) {
-        return res.status(422).json({ error: "Please fill all the fields" });
+        return res.status(402).json({ error: "Please fill all the fields" });
     }
 
     try {
         // Generate salt and hash password
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
-
 
 
         // Create new user
@@ -72,8 +71,6 @@ app.post('/api/register', async (req, res) => {
 
 
         res.cookie('token', token);
-
-
 
         // Send a success response
         res.status(201).json({ message: "User registered successfully", user });
@@ -104,7 +101,6 @@ app.post('/api/login', async (req, res) => {
             }
 
             if (result) {
-
                 const token = jwt.sign({ id: user._id, email: user.email }, 'shhhhh')
                 res.cookie("token", token)
                 return res.status(200).json({ message: "Login successful" });
@@ -113,9 +109,6 @@ app.post('/api/login', async (req, res) => {
                 return res.status(401).json({ error: "Invalid credentials" });
             }
         });
-
-
-
 
     } catch (error) {
         console.error(error);
