@@ -60,6 +60,7 @@ app.post('/api/register', async (req, res) => {
             age,
         });
 
+        console.log("userId::", user)
         //set JWT token
         const token = jwt.sign({
             id: user._id,
@@ -148,7 +149,6 @@ app.post('/api/post', authenticateToken, async (req, res) => {
     try {
         const { content } = req.body;
 
-        // Use the ID from the token to find the user in the database
         const user = await User.findOne({ email: req.user.email });
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -156,13 +156,15 @@ app.post('/api/post', authenticateToken, async (req, res) => {
 
         // Create a new post
         const post = await Post.create({
-            id: user._id,
+            userId: user._id,
             content: content,
         });
 
         user.posts.push(post._id);
         await user.save();
         await post.save();
+
+        console.log('Created Post:', post);
 
         res.status(200).json({ post });
 
@@ -172,12 +174,13 @@ app.post('/api/post', authenticateToken, async (req, res) => {
     }
 });
 
+
 app.get('/api/user/posts', authenticateToken, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).populate({
             path: 'posts',
             populate: {
-                path: 'id',
+                path: 'userId',
                 model: 'User'
             }
         });
@@ -220,7 +223,39 @@ app.post('/api/post/:id/like', authenticateToken, async (req, res) => {
         console.log('error while liking the post', error);
     }
 
-})
+});
+
+// Edit a post
+app.put('/api/post/:id', authenticateToken, async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const { content } = req.body;
+
+        const post = await Post.findById(postId);
+        if (!post) return res.status(404).json({ error: 'Post not found' });
+
+
+        console.log('Post retrieved:', post);
+        console.log('Post User ID:', post.userId.toString());
+        console.log('Authenticated User ID:', req.user.id);
+
+
+        if (post.userId.toString() !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        post.content = content;
+        await post.save();
+
+        res.status(200).json({ message: 'Post updated successfully', post });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+
+
 
 
 // Test route

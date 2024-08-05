@@ -8,6 +8,8 @@ const Post = () => {
     const [userDetails, setUserDetails] = useState({});
     const [postContent, setPostContent] = useState('');
     const [posts, setPosts] = useState([]);
+    const [editPostId, setEditPostId] = useState(null);
+    const [editPostEnable, setEditPostEnable] = useState(false)
 
     useEffect(() => {
         const fetchUserDetailsAndPosts = async () => {
@@ -62,6 +64,26 @@ const Post = () => {
     }
 
 
+    const handleEditPost = async (postId) => {
+        console.log("postIdParameter::", postId)
+        console.log("post_id:", posts)
+        try {
+            const response = await axios.put(`/api/post/${postId}`, { content: postContent });
+            setPosts((prevPosts) =>
+                prevPosts.map((post) =>
+                    post._id === postId ? { ...post, content: response.data.post.content } : post
+                )
+            );
+            setEditPostEnable(false);
+            setEditPostId(null);
+            setPostContent('');
+        } catch (error) {
+            console.error('Error editing post:', error);
+        }
+    };
+
+
+
     console.log("posts::", posts)
 
     return (
@@ -80,12 +102,28 @@ const Post = () => {
                 onChange={(e) => setPostContent(e.target.value)}
                 style={{ padding: '10px', width: '40%', marginLeft: '20px', display: 'block', height: '100px' }}
             ></textarea>
-            <button
-                style={{ padding: '10px', display: 'block', marginLeft: '20px', marginTop: '10px', borderRadius: '6px', fontWeight: 'bold' }}
-                onClick={handleCreatePost}
-            >
-                Create a post
-            </button>
+            {editPostEnable ?
+                <>
+                    <button
+                        onClick={() => handleEditPost(editPostId)}
+                        style={{ padding: '10px', backgroundColor: '#F4CE14', color: 'black', marginLeft: '17px', marginTop: '10px', borderRadius: '6px', fontWeight: 'bold' }}
+                    >
+                        Save
+                    </button>
+                    <button
+                        onClick={() => setEditPostEnable(false)}
+                        style={{ padding: '10px', backgroundColor: '#7F8C8D', color: 'white', borderRadius: '6px', fontWeight: 'bold' }}
+                    >
+                        Cancel
+                    </button>
+                </>
+                :
+                <button
+                    style={{ padding: '13px', display: 'block', marginLeft: '20px', marginTop: '10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', backgroundColor: 'yellow', color: 'black' }}
+                    onClick={handleCreatePost}
+                >
+                    Create a post
+                </button>}
 
             <div style={{ marginLeft: '20px' }}>
                 <h3>Your Posts 📑</h3>
@@ -106,7 +144,18 @@ const Post = () => {
                                     onClick={() => toggleLikePost(post._id)}>
                                     {post.likes.includes(userDetails?._id) ? 'Unlike' : 'Like'}
                                 </p>
-                                <p style={{ fontSize: '12px', cursor: 'pointer', color: '#7F8C8D' }}>Edit</p>
+
+                                <p
+                                    style={{ fontSize: '12px', cursor: 'pointer', color: '#7F8C8D' }}
+                                    onClick={() => {
+                                        setEditPostId(post._id);
+                                        setPostContent(post.content);
+                                        setEditPostEnable(true);
+                                    }}
+                                >
+                                    Edit
+                                </p>
+
                             </div>
                         </div>
                     ))

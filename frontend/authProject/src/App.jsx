@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 function App() {
 
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: '',
     name: '',
@@ -25,6 +27,7 @@ function App() {
     try {
       const response = await axios.post('/api/register', formData);
       console.log('User created successfully:', response.data);
+      navigate("/profile")
       if (response.status === 422) {
         alert("Please fill all the fields");
       }
