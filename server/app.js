@@ -36,7 +36,6 @@ const authenticateToken = (req, res, next) => {
 };
 
 
-
 //register a user
 app.post('/api/register', async (req, res) => {
     const { username, name, email, password, age } = req.body;
@@ -137,8 +136,6 @@ app.get('/api/user', authenticateToken, async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-
-        console.log('user::', user);
         res.json(user);
     } catch (error) {
         console.error(error);
@@ -177,7 +174,14 @@ app.post('/api/post', authenticateToken, async (req, res) => {
 
 app.get('/api/user/posts', authenticateToken, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate('posts');
+        const user = await User.findById(req.user.id).populate({
+            path: 'posts',
+            populate: {
+                path: 'id',
+                model: 'User'
+            }
+        });
+
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
@@ -188,6 +192,35 @@ app.get('/api/user/posts', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
+
+//like and unlikes apis. 
+app.post('/api/post/:id/like', authenticateToken, async (req, res) => {
+
+    try {
+        const postId = req.params.id;
+        const userId = req.user.id;
+
+        const post = await Post.findById(postId);
+        if (!post) {
+            res.status(404).json({ message: 'No Post for this user' })
+        }
+
+        if (post.likes.includes(userId)) {
+            post.likes = post.likes.filter((id) => id.toString() !== userId)
+            await post.save();
+            return res.status(200).json({ message: 'Post unlike sucessfully', post })
+        }
+        else {
+            post.likes.push(userId);
+            await post.save();
+            return res.status(200).json({ message: 'Post liked sucessfully', post })
+        }
+
+    } catch (error) {
+        console.log('error while liking the post', error);
+    }
+
+})
 
 
 // Test route

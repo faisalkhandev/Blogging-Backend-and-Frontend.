@@ -35,8 +35,6 @@ const Post = () => {
         }
     };
 
-
-
     const handleLogOut = async () => {
         try {
             await axios.get('/api/logout');
@@ -45,6 +43,26 @@ const Post = () => {
             console.error('Error during logout:', error);
         }
     };
+
+    async function toggleLikePost(postId) {
+
+        try {
+            const hasLiked = await axios.post(`/api/post/${postId}/like`)
+            const updatedPost = hasLiked?.data?.post
+            setPosts((prevPosts) => (
+                prevPosts.map((post) => (
+                    post._id === postId ? updatedPost : post
+                ))
+            ))
+
+        } catch (error) {
+            console.log("error while liking/unliking the post:", error)
+        }
+
+    }
+
+
+    console.log("posts::", posts)
 
     return (
         <>
@@ -70,17 +88,25 @@ const Post = () => {
             </button>
 
             <div style={{ marginLeft: '20px' }}>
-                <h3>Your Posts</h3>
+                <h3>Your Posts 📑</h3>
                 {posts.length > 0 ? (
-                    posts.slice().reverse().map((post) => (
+                    posts.map((post) =>
+                    (
                         <div key={post._id} className="postContainer" style={{ width: '40%', border: '1px solid #7F8C8D', padding: '10px', borderRadius: '6px', marginBottom: '10px' }}>
                             <p style={{ fontSize: '10px', color: '#007BFF', cursor: 'pointer' }}>@{userDetails.username}</p>
                             <p style={{ fontSize: '14px', textAlign: 'justify' }}>
                                 {post.content}
                             </p>
-                            <div className="btns" style={{ display: 'flex', gap: 4 }}>
-                                <p style={{ fontSize: '10px', color: '#007BFF', cursor: 'pointer' }}>Like</p>
-                                <p style={{ fontSize: '10px', cursor: 'pointer', color: '#7F8C8D' }}>Edit</p>
+                            <div className='likes' style={{ display: 'flex', gap: 20 }}>
+                                <small>{post?.likes?.length} Like</small>
+                                <small>{new Date(post.date).toLocaleString()}</small>
+                            </div>
+                            <div className="btns" style={{ display: 'flex', gap: 10 }}>
+                                <p style={{ fontSize: '12px', color: '#007BFF', cursor: 'pointer' }}
+                                    onClick={() => toggleLikePost(post._id)}>
+                                    {post.likes.includes(userDetails?._id) ? 'Unlike' : 'Like'}
+                                </p>
+                                <p style={{ fontSize: '12px', cursor: 'pointer', color: '#7F8C8D' }}>Edit</p>
                             </div>
                         </div>
                     ))
@@ -88,7 +114,7 @@ const Post = () => {
                     <p>No posts available</p>
                 )}
 
-            </div>
+            </div >
         </>
     );
 };
