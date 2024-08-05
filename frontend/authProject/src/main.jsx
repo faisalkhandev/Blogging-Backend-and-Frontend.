@@ -19,7 +19,9 @@ const router = createBrowserRouter([
   },
   {
     path: '/post',
-    element: <Post />,
+    element: <PrivateRoutes>
+      <Post />
+    </PrivateRoutes>,
   },
   {
     path: '/profile',

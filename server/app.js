@@ -145,6 +145,51 @@ app.get('/api/user', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
+
+//create the post 
+app.post('/api/post', authenticateToken, async (req, res) => {
+    try {
+        const { content } = req.body;
+
+        // Use the ID from the token to find the user in the database
+        const user = await User.findOne({ email: req.user.email });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Create a new post
+        const post = await Post.create({
+            id: user._id,
+            content: content,
+        });
+
+        user.posts.push(post._id);
+        await user.save();
+        await post.save();
+
+        res.status(200).json({ post });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+app.get('/api/user/posts', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).populate('posts');
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ posts: user.posts });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+
 // Test route
 app.get('/api', (req, res) => {
     res.send({ message: 'Hello from the server!' });

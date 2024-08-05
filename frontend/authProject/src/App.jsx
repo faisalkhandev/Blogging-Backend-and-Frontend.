@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import './App.css';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
 
@@ -32,6 +33,8 @@ function App() {
     }
   };
 
+
+
   return (
     <div className='form'>
       <h3 style={{ color: 'white', marginBottom: '10px', marginLeft: '10px' }}>Create Account</h3>
@@ -41,8 +44,9 @@ function App() {
         <input type="email" placeholder='Enter your email' name='email' value={formData.email} onChange={handleChange} />
         <input type="password" placeholder='Enter your password' name='password' value={formData.password} onChange={handleChange} />
         <input type="number" placeholder='Enter your age' name='age' value={formData.age} onChange={handleChange} />
-        <button type='submit'>Submit</button>
+        <button type='submit' style={{ borderRadius: '6px' }}>Submit</button>
       </form>
+
     </div>
   );
 }

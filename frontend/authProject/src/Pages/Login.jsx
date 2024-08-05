@@ -37,6 +37,9 @@ const Login = () => {
             }
         }
     };
+    function handleregister() {
+        navigate('/register');
+    }
 
     return (
         <div>
@@ -57,7 +60,11 @@ const Login = () => {
                 />
                 <button type="submit">Submit</button>
             </form>
-            {message && <p>{message}</p>}
+            {message && <p style={{ marginLeft: '15px' }}>{message}</p>}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '10px 10px' }}>
+                <p style={{ margin: 0, padding: 0 }}>you can register here 😊</p>
+                <button onClick={handleregister} style={{ borderRadius: '6px' }}>Register</button>
+            </div>
         </div>
     );
 };
