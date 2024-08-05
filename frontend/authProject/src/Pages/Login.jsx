@@ -23,7 +23,7 @@ const Login = () => {
             const response = await axios.post('/api/login', formData);
             console.log('response::', response)
             setMessage(response.data);
-            navigate('/profile');
+            navigate('/post');
             console.log("Login successful", response.data);
 
         } catch (error) {
@@ -58,7 +58,7 @@ const Login = () => {
                     value={formData.password}
                     onChange={handleChange}
                 />
-                <button type="submit">Submit</button>
+                <button type="submit" style={{ borderRadius: '6px' }}>Login</button>
             </form>
             {message && <p style={{ marginLeft: '15px' }}>{message}</p>}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '10px 10px' }}>

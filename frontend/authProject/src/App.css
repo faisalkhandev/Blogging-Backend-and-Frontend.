@@ -14,8 +14,9 @@ input{
 }
 button{
     padding: 10px;
-    background-color: #324ce4;
-    color: white;
+    background-color: #F4CE14;
+    color: black;
+    border-radius: '6px';
 }
 
 .postPage{

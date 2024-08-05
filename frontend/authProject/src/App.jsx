@@ -47,7 +47,7 @@ function App() {
         <input type="email" placeholder='Enter your email' name='email' value={formData.email} onChange={handleChange} />
         <input type="password" placeholder='Enter your password' name='password' value={formData.password} onChange={handleChange} />
         <input type="number" placeholder='Enter your age' name='age' value={formData.age} onChange={handleChange} />
-        <button type='submit' style={{ borderRadius: '6px' }}>Submit</button>
+        <button type='submit' style={{ borderRadius: '6px' }}>Register 😊</button>
       </form>
 
     </div>
