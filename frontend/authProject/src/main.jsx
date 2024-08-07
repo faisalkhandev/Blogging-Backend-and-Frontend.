@@ -7,8 +7,13 @@ import Login from './Pages/Login.jsx';
 import Profile from './Pages/Profile.jsx';
 import PrivateRoutes from './routes/PrivateRoutes.jsx';
 import Post from './Pages/Post';
+import HomePage from './Pages/HomePage.jsx';
 
 const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <HomePage />,
+  },
   {
     path: '/register',
     element: <App />,
