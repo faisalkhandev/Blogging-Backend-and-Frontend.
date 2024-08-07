@@ -236,7 +236,7 @@ app.put('/api/post/:id', authenticateToken, async (req, res) => {
 
 
         console.log('Post retrieved:', post);
-        console.log('Post User ID:', post.userId.toString());
+        console.log('Post User ID:', post.userId);
         console.log('Authenticated User ID:', req.user.id);
 
 
