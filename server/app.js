@@ -235,11 +235,6 @@ app.put('/api/post/:id', authenticateToken, async (req, res) => {
         if (!post) return res.status(404).json({ error: 'Post not found' });
 
 
-        console.log('Post retrieved:', post);
-        console.log('Post User ID:', post.userId);
-        console.log('Authenticated User ID:', req.user.id);
-
-
         if (post.userId.toString() !== req.user.id) {
             return res.status(403).json({ error: 'Unauthorized' });
         }
